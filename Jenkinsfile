@@ -81,10 +81,16 @@ pipeline {
                 }
             }
             steps{
-                sh '''
-                    aws --version
-                    aws s3 ls
-                '''
+                withCredentials([usernamePassword(credentialsId: 'tempAWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
+                {
+                    // some block
+                    sh '''
+                        aws --version
+                        aws s3 ls
+                        echo "Hello S3!" > index.html
+                        aws s3 cp index.html s3://temp2026-03-22/index.html
+                    '''
+                }
             }
         }
     }
