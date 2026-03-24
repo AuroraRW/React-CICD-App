@@ -122,5 +122,6 @@ pipeline {
                     aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260324 --task-definition my-temp-task-definition-2-20260324:1
                 }
             }
+        }
     }
 }
