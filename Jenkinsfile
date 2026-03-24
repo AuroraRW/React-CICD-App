@@ -117,9 +117,12 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'tempAWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
                 {
                     // some block
-                    aws --version
-                    aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
-                    aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260324 --task-definition my-temp-task-definition-2-20260324:1
+                    sh'''
+                        aws --version
+                        aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
+                        # aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260324 --task-definition my-temp-task-definition-2-20260324:1
+                    '''
+                    
                 }
             }
         }
