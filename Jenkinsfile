@@ -11,41 +11,41 @@ pipeline {
         //     }
         // }
 
-        stage('Build') {
-            agent {
-                docker {
-                    image 'node:24.14.0-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    # list all files
-                    ls -la
-                    node --version
-                    npm --version
-                    npm install
-                    # npm ci
-                    npm run build
-                    ls -la
-                '''
-            }
-        }
+        // stage('Build') {
+        //     agent {
+        //         docker {
+        //             image 'node:24.14.0-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             # list all files
+        //             ls -la
+        //             node --version
+        //             npm --version
+        //             npm install
+        //             # npm ci
+        //             npm run build
+        //             ls -la
+        //         '''
+        //     }
+        // }
 
-        stage('Test') {
-            agent {
-                docker {
-                    image 'node:24.14.0-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    test -f build/index.html
-                    npm test
-                '''
-            }
-        }
+        // stage('Test') {
+        //     agent {
+        //         docker {
+        //             image 'node:24.14.0-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             test -f build/index.html
+        //             npm test
+        //         '''
+        //     }
+        // }
 
         // stage('Deploy') {
         //     agent {
@@ -72,31 +72,55 @@ pipeline {
         //         '''
         //     }
         // }
-        stage('AWS'){
-            agent {
-                docker {
+        // stage('AWS'){
+        //     agent {
+        //         docker {
+        //             image 'amazon/aws-cli'
+        //             reuseNode true
+        //             args '--entrypoint=""'
+        //         }
+        //     }
+        //     environment{
+        //         AWS_S3_BUCKET = 'temp2026-03-22'
+        //     }
+
+        //     steps{
+        //         withCredentials([usernamePassword(credentialsId: 'tempAWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
+        //         {
+        //             // some block
+        //             sh '''
+        //                 aws --version
+        //                 aws s3 ls
+        //                 # echo "Hello S3!" > index.html
+        //                 # aws s3 cp index.html s3://temp2026-03-22/index.html
+        //                 aws s3 sync build s3://$AWS_S3_BUCKET
+        //             '''
+        //         }
+        //     }
+        // }
+        environment{
+            AWS_DEFAULT_REGION = 'us-east-2'
+        }
+
+        stage('Deploy to AWS'){
+            agent{
+                docker{
                     image 'amazon/aws-cli'
                     reuseNode true
+                    // login as root, so that we could install jq
+                    // args '-u root --entrypoint=""'
                     args '--entrypoint=""'
                 }
-            }
-            environment{
-                AWS_S3_BUCKET = 'temp2026-03-22'
             }
 
             steps{
                 withCredentials([usernamePassword(credentialsId: 'tempAWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
                 {
                     // some block
-                    sh '''
-                        aws --version
-                        aws s3 ls
-                        # echo "Hello S3!" > index.html
-                        # aws s3 cp index.html s3://temp2026-03-22/index.html
-                        aws s3 sync build s3://$AWS_S3_BUCKET
-                    '''
+                    aws --version
+                    aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
+                    aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260324 --task-definition my-temp-task-definition-2-20260324:1
                 }
             }
-        }
     }
 }
