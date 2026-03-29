@@ -109,7 +109,7 @@ pipeline {
                     reuseNode true
                     // login as root, so that we could install jq
                     // args '-u root --entrypoint=""'
-                    args '--entrypoint=""'
+                    args '-u root --entrypoint=""'
                 }
             }
 
@@ -120,7 +120,11 @@ pipeline {
                     sh'''
                         aws --version
                         # aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
-                        aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260329 --task-definition my-temp-task-definition-json-20260329:3
+                        # aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260329 --task-definition my-temp-task-definition-json-20260329:3
+                        
+                        yum install jq -y
+                        LATEST_TD_REVISION=$(aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq '.taskDefinition.revision')
+                        aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260329 --task-definition my-temp-task-definition-json-20260329:$LATEST_TD_REVISION
                     '''
                     
                 }
