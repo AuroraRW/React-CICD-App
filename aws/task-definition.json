@@ -2,7 +2,7 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "family": "my-temp-task-definition-2-20260324",
+    "family": "my-temp-task-definition-2-20260329",
     "containerDefinitions": [
         {
             "name": "test2",
