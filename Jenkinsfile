@@ -119,8 +119,8 @@ pipeline {
                     // some block
                     sh'''
                         aws --version
-                        aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
-                        # aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260329 --task-definition my-temp-task-definition-json-20260329:3
+                        # aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
+                        aws ecs update-service --cluster my-cluster-20260324 --service my-temp-service-20260329 --task-definition my-temp-task-definition-json-20260329:3
                     '''
                     
                 }
