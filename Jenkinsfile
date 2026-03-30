@@ -112,7 +112,7 @@ pipeline {
             steps{
                 sh '''
                     dnf install -y docker
-                    docker build -t my-docker-image .
+                    docker build -t my-docker-AWS-image .
                 '''
             }
 
