@@ -113,6 +113,7 @@ pipeline {
                 sh '''
                     dnf install -y docker
                     docker build -t my-docker-aws-image .
+                    docker images
                 '''
             }
 
