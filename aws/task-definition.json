@@ -6,7 +6,7 @@
     "containerDefinitions": [
         {
             "name": "test2",
-            "image": "nginx:1.27-alpine",
+            "image": "612634926349.dkr.ecr.us-east-2.amazonaws.com/mytemp",
             "portMappings": [
                 {
                     "name": "ngnix-80-tcp",
