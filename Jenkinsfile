@@ -6,6 +6,8 @@ pipeline {
     // }
     environment{
         AWS_DEFAULT_REGION = 'us-east-2'
+        AWS_DOCKER_REGISTRY = '612634926349.dkr.ecr.us-east-2.amazonaws.com'
+        APP_NAME = 'mytemp'
     }
     stages {
         // stage('Docker'){
@@ -110,11 +112,15 @@ pipeline {
                 }
             }
             steps{
-                sh '''
-                    dnf install -y docker
-                    docker build -t my-docker-aws-image .
-                    docker images
-                '''
+                withCredentials([usernamePassword(credentialsId: 'tempAWS', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
+                {
+                    sh '''
+                        dnf install -y docker
+                        docker build -t $AWS_DOCKER_REGISTRY/$APP_NAME .
+                        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTRY
+                        docker push $AWS_DOCKER_REGISTRY/$APP_NAME:latest
+                    '''
+                }
             }
 
         }
