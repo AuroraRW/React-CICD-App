@@ -16,41 +16,41 @@ pipeline {
         //     }
         // }
 
-        // stage('Build') {
-        //     agent {
-        //         docker {
-        //             image 'node:24.14.0-alpine'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //             # list all files
-        //             ls -la
-        //             node --version
-        //             npm --version
-        //             npm install
-        //             # npm ci
-        //             npm run build
-        //             ls -la
-        //         '''
-        //     }
-        // }
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:24.14.0-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    # list all files
+                    ls -la
+                    node --version
+                    npm --version
+                    npm install
+                    # npm ci
+                    npm run build
+                    ls -la
+                '''
+            }
+        }
 
-        // stage('Test') {
-        //     agent {
-        //         docker {
-        //             image 'node:24.14.0-alpine'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //             test -f build/index.html
-        //             npm test
-        //         '''
-        //     }
-        // }
+        stage('Test') {
+            agent {
+                docker {
+                    image 'node:24.14.0-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    test -f build/index.html
+                    npm test
+                '''
+            }
+        }
 
         // stage('Deploy') {
         //     agent {
@@ -130,7 +130,6 @@ pipeline {
                     image 'amazon/aws-cli'
                     reuseNode true
                     // login as root, so that we could install jq
-                    // args '-u root --entrypoint=""'
                     args '-u root --entrypoint=""'
                 }
             }
